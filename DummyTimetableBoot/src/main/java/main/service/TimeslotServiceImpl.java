@@ -40,7 +40,8 @@ public class TimeslotServiceImpl implements TimeslotService {
 	}
 
 	@Override
-	public void addTimeslot(int userId, Timeslot timeSlot) {
+	@Transactional(isolation = Isolation.SERIALIZABLE)
+	public synchronized void addTimeslot(int userId, Timeslot timeSlot) {
 		User user = userService.findById(userId);
 		/// 1. start_at > now
 		if(timeSlot.getStart_at() <= LocalDateTime.now().toLocalTime().toSecondOfDay())
