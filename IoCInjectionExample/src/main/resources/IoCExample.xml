@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns="http://www.springframework.org/schema/beans"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config/>
+
+    <!-- IoC Method1: DI with property - we must have setter for each property -->
+    <bean id="student-1" class="com.example.iocexample.pojo.Student" destroy-method="destroy">
+        <property name="no" value="15"/>
+        <property name="name" value="Tom"/>
+    </bean>
+
+    <!-- IoC Method2: DI with constructor - we must have proper constructor -->
+    <!-- you needn't use index to specify the order, if your order matches constructor's order -->
+    <bean id="student-2" class="com.example.iocexample.pojo.Student">
+        <constructor-arg value="6"/>
+        <constructor-arg value="Ray"/>
+    </bean>
+    <!-- use index to specify your parameter's order in constructor -->
+    <bean id="student-3" class="com.example.iocexample.pojo.Student">
+        <constructor-arg value="Richard" index="1"/>
+        <constructor-arg value="4" index="0"/>
+    </bean>
+
+    <!-- IoC Method3: DI with factory method - we must have proper constructor -->
+    <!-- static method -->
+    <bean id="student-0" class="com.example.iocexample.pojo.Student" factory-method="getStudent">
+        <constructor-arg value="dummy" index="1"/>
+        <constructor-arg value="0" index="0"/>
+    </bean>
+    <!-- non-static method -->
+    <bean id="student-1-1" class="com.example.iocexample.pojo.Student" factory-method="duplicate" factory-bean="student-1" />
+
+    <!-- we can use other bean as a value for a property by using ref -->
+    <bean id="contact-book" class="com.example.iocexample.pojo.ContactBook">
+        <property name="studentList">
+            <list>
+                <ref bean="student-0"/>
+                <ref bean="student-1"/>
+                <ref bean="student-1-1"/>
+                <ref bean="student-2"/>
+                <ref bean="student-3"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- if you want to create a actor using spring container, the scope can't be default -->
+    <bean id="my-actor" class="com.example.iocexample.actor.MyActor" scope="prototype">
+        <property name="contactBook" ref="contact-book"/>
+    </bean>
+
+</beans>
